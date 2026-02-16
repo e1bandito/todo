@@ -1,0 +1,32 @@
+---
+import Sidebar from '../components/Sidebar.astro';
+import MainContent from '../components/MainContent.astro';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>To-Do List Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="flex min-h-screen md:items-center justify-center bg-[#ebf2f5] p-0 antialiased md:p-4"
+  >
+    <div
+      class="flex h-full w-full flex-col overflow-hidden bg-white shadow-none transition-all duration-300 md:max-h-[800px] md:max-w-[1000px] md:flex-row md:rounded-md md:shadow-[0_20px_60px_rgba(0,0,0,0.1)]"
+    >
+      <Sidebar />
+      <MainContent />
+    </div>
+  </body>
+</html>

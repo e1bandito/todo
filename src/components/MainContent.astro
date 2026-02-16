@@ -1,0 +1,70 @@
+---
+import CategoryTag from './CategoryTag.astro';
+import NoteCard from './NoteCard.astro';
+---
+
+<main class="flex flex-1 flex-col overflow-y-auto bg-[#f9f9f7] p-4 md:p-10">
+  <header
+    class="mb-6 flex flex-col justify-between gap-4 md:mb-10 md:flex-row md:items-center"
+  >
+    <button
+      class="flex h-10 w-10 items-center justify-center rounded-full bg-[#5fbcd3] text-white shadow-md transition-all hover:scale-110 active:scale-95"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        ><line x1="12" y1="5" x2="12" y2="19"></line><line
+          x1="5"
+          y1="12"
+          x2="19"
+          y2="12"></line></svg
+      >
+    </button>
+
+    <div class="flex flex-wrap justify-start gap-2 md:justify-end md:gap-3">
+      <CategoryTag label="shopping" color="purple" />
+      <CategoryTag label="business" color="pink" />
+      <CategoryTag label="other things" color="orange" />
+    </div>
+  </header>
+
+  <div class="flex max-w-4xl flex-col gap-6">
+    <NoteCard
+      title="Grocery list"
+      content={[
+        'Bread, Cereal, Rice and Pasta: Bread',
+        'Vegetables: Carrots',
+        'Milk, Yogurt and Cheese: Milk',
+      ]}
+      isList
+      accentClass="bg-[#a28ed4]"
+    />
+
+    <NoteCard
+      title="Quotes"
+      content={[
+        '"In the plenitude of their relationship, Florentina Ariza asked himself which of the two was love: the turbulent bed or the peaceful Sunday afternoons, and Sara Noriega calmed (...)"',
+      ]}
+      accentClass="bg-[#ec9f73]"
+      isFavorite
+    />
+
+    <NoteCard
+      title="Movie watchlist"
+      content={[
+        'The Blues Brothers',
+        'Extremely Loud & Incredibly Close',
+        'Moonlight',
+      ]}
+      isList
+      accentClass="bg-[#ec9f73]"
+    />
+  </div>
+</main>
