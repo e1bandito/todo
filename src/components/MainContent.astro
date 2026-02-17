@@ -1,6 +1,6 @@
 ---
 import CategoryTag from './CategoryTag.astro';
-import NoteCard from './NoteCard.astro';
+import { TodoList } from './TodoList';
 ---
 
 <main class="flex flex-1 flex-col overflow-y-auto bg-[#f9f9f7] p-4 md:p-10">
@@ -35,36 +35,5 @@ import NoteCard from './NoteCard.astro';
     </div>
   </header>
 
-  <div class="flex max-w-4xl flex-col gap-6">
-    <NoteCard
-      title="Grocery list"
-      content={[
-        'Bread, Cereal, Rice and Pasta: Bread',
-        'Vegetables: Carrots',
-        'Milk, Yogurt and Cheese: Milk',
-      ]}
-      isList
-      accentClass="bg-[#a28ed4]"
-    />
-
-    <NoteCard
-      title="Quotes"
-      content={[
-        '"In the plenitude of their relationship, Florentina Ariza asked himself which of the two was love: the turbulent bed or the peaceful Sunday afternoons, and Sara Noriega calmed (...)"',
-      ]}
-      accentClass="bg-[#ec9f73]"
-      isFavorite
-    />
-
-    <NoteCard
-      title="Movie watchlist"
-      content={[
-        'The Blues Brothers',
-        'Extremely Loud & Incredibly Close',
-        'Moonlight',
-      ]}
-      isList
-      accentClass="bg-[#ec9f73]"
-    />
-  </div>
+  <TodoList client:load />
 </main>
