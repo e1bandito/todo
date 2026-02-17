@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconButton } from './IconButton';
 
 interface NoteCardProps {
   title: string;
@@ -6,6 +7,8 @@ interface NoteCardProps {
   isList?: boolean;
   accentClass: string;
   isFavorite?: boolean;
+  onDelete?: () => void;
+  onToggleFavorite?: () => void;
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
@@ -14,6 +17,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   isList = false,
   accentClass,
   isFavorite = false,
+  onDelete,
+  onToggleFavorite,
 }) => {
   return (
     <div className="flex min-h-[160px] overflow-hidden rounded-sm bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
@@ -24,7 +29,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             {title}
           </h3>
           <div className="flex gap-2">
-            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5fbcd3] text-white transition-colors hover:bg-[#4ea9bf]">
+            <IconButton
+              onClick={onDelete}
+              className="bg-[#5fbcd3] text-white hover:bg-[#4ea9bf]"
+              ariaLabel="Delete note"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -42,9 +51,17 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 <line x1="10" y1="11" x2="10" y2="17"></line>
                 <line x1="14" y1="11" x2="14" y2="17"></line>
               </svg>
-            </button>
-            <button
-              className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#5fbcd3] transition-colors ${isFavorite ? 'bg-[#5fbcd3] text-white' : 'bg-white text-[#5fbcd3] hover:bg-[#5fbcd3]/10'}`}
+            </IconButton>
+            <IconButton
+              onClick={onToggleFavorite}
+              className={`border-2 border-[#5fbcd3] ${
+                isFavorite
+                  ? 'bg-[#5fbcd3] text-white'
+                  : 'bg-white text-[#5fbcd3] hover:bg-[#5fbcd3]/10'
+              }`}
+              ariaLabel={
+                isFavorite ? 'Remove from favorites' : 'Add to favorites'
+              }
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +76,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               >
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
-            </button>
+            </IconButton>
           </div>
         </div>
 
