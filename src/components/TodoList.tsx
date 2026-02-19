@@ -44,6 +44,10 @@ export const TodoList: React.FC = () => {
     };
 
     fetchTodos();
+
+    const handleAdded = () => fetchTodos();
+    window.addEventListener('todo-added', handleAdded);
+    return () => window.removeEventListener('todo-added', handleAdded);
   }, []);
 
   const handleToggleFavorite = async (id: string) => {

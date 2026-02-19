@@ -1,32 +1,14 @@
 ---
 import CategoryTag from './CategoryTag.astro';
 import { TodoList } from './TodoList';
+import { AddTodoDialog } from './AddTodoDialog';
 ---
 
 <main class="flex flex-1 flex-col overflow-y-auto bg-[#f9f9f7] p-4 md:p-10">
   <header
     class="mb-6 flex flex-col justify-between gap-4 md:mb-10 md:flex-row md:items-center"
   >
-    <button
-      class="flex h-10 w-10 items-center justify-center rounded-full bg-[#5fbcd3] text-white shadow-md transition-all hover:scale-110 active:scale-95"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="3"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        ><line x1="12" y1="5" x2="12" y2="19"></line><line
-          x1="5"
-          y1="12"
-          x2="19"
-          y2="12"></line></svg
-      >
-    </button>
+    <AddTodoDialog client:load />
 
     <div class="flex flex-wrap justify-start gap-2 md:justify-end md:gap-3">
       <CategoryTag label="shopping" color="purple" />
