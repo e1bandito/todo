@@ -7,6 +7,8 @@ interface Todo {
   tags: string[];
   title: string;
   text: string;
+  isFavorite: boolean;
+  isDeleted: boolean;
 }
 
 const ACCENT_COLORS = [
@@ -21,12 +23,12 @@ export const TodoList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_URL = 'https://690ef084bd0fefc30a062073.mockapi.io/todos';
+
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const response = await fetch(
-          'https://690ef084bd0fefc30a062073.mockapi.io/todos'
-        );
+        const response = await fetch(API_URL);
         if (!response.ok) {
           throw new Error('Failed to fetch todos');
         }
@@ -44,6 +46,63 @@ export const TodoList: React.FC = () => {
     fetchTodos();
   }, []);
 
+  const handleToggleFavorite = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+
+    const newFavoriteStatus = !todo.isFavorite;
+
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, isFavorite: newFavoriteStatus } : t
+      )
+    );
+
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isFavorite: newFavoriteStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update favorite status');
+      }
+    } catch (err) {
+      console.error(err);
+      setTodos((prev) =>
+        prev.map((t) =>
+          t.id === id ? { ...t, isFavorite: todo.isFavorite } : t
+        )
+      );
+    }
+  };
+
+  const handleToggleDelete = async (id: string) => {
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, isDeleted: true } : todo))
+    );
+
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isDeleted: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete todo');
+      }
+    } catch (err) {
+      console.error(err);
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id ? { ...todo, isDeleted: false } : todo
+        )
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 text-center text-gray-500">Loading todos...</div>
@@ -54,16 +113,20 @@ export const TodoList: React.FC = () => {
     return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   }
 
+  const activeTodos = todos.filter((todo) => !todo.isDeleted);
+
   return (
     <div className="flex w-full max-w-4xl flex-col gap-6">
-      {todos.map((todo, index) => (
+      {activeTodos.map((todo, index) => (
         <NoteCard
           key={todo.id}
           title={todo.title}
           content={[todo.text]}
           isList={todo.tags.length > 0}
           accentClass={ACCENT_COLORS[index % ACCENT_COLORS.length]}
-          isFavorite={index % 3 === 0}
+          isFavorite={todo.isFavorite}
+          onDelete={() => handleToggleDelete(todo.id)}
+          onToggleFavorite={() => handleToggleFavorite(todo.id)}
         />
       ))}
     </div>

@@ -7,6 +7,7 @@ interface NoteCardProps {
   isList?: boolean;
   accentClass: string;
   isFavorite?: boolean;
+  isDeleted?: boolean;
   onDelete?: () => void;
   onToggleFavorite?: () => void;
 }
@@ -17,6 +18,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   isList = false,
   accentClass,
   isFavorite = false,
+  isDeleted = false,
   onDelete,
   onToggleFavorite,
 }) => {
