@@ -1,6 +1,5 @@
 ---
-import Sidebar from '../components/Sidebar.astro';
-import MainContent from '../components/MainContent.astro';
+import { Dashboard } from '../components/Dashboard';
 import '../styles/global.css';
 ---
 
@@ -22,11 +21,6 @@ import '../styles/global.css';
   <body
     class="flex min-h-screen md:items-center justify-center bg-[#ebf2f5] p-0 antialiased md:p-4"
   >
-    <div
-      class="flex h-full w-full flex-col overflow-hidden bg-white shadow-none transition-all duration-300 md:max-h-[800px] md:max-w-[1000px] md:flex-row md:rounded-md md:shadow-[0_20px_60px_rgba(0,0,0,0.1)]"
-    >
-      <Sidebar />
-      <MainContent />
-    </div>
+    <Dashboard client:load />
   </body>
 </html>

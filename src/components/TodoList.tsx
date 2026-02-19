@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NoteCard } from './NoteCard';
+import type { TabType } from './Sidebar';
 
 interface Todo {
   id: string;
@@ -11,6 +12,10 @@ interface Todo {
   isDeleted: boolean;
 }
 
+interface TodoListProps {
+  activeTab: TabType;
+}
+
 const ACCENT_COLORS = [
   'bg-[#a28ed4]', // purple
   'bg-[#ec9f73]', // orange
@@ -18,7 +23,7 @@ const ACCENT_COLORS = [
   'bg-[#ef9db3]', // pink
 ];
 
-export const TodoList: React.FC = () => {
+export const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -117,22 +122,36 @@ export const TodoList: React.FC = () => {
     return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   }
 
-  const activeTodos = todos.filter((todo) => !todo.isDeleted);
+  const filteredTodos = todos.filter((todo) => {
+    if (activeTab === 'trash') {
+      return todo.isDeleted;
+    }
+    if (activeTab === 'favorites') {
+      return todo.isFavorite && !todo.isDeleted;
+    }
+    return !todo.isDeleted;
+  });
 
   return (
     <div className="flex w-full max-w-4xl flex-col gap-6">
-      {activeTodos.map((todo, index) => (
-        <NoteCard
-          key={todo.id}
-          title={todo.title}
-          content={[todo.text]}
-          isList={todo.tags.length > 0}
-          accentClass={ACCENT_COLORS[index % ACCENT_COLORS.length]}
-          isFavorite={todo.isFavorite}
-          onDelete={() => handleToggleDelete(todo.id)}
-          onToggleFavorite={() => handleToggleFavorite(todo.id)}
-        />
-      ))}
+      {filteredTodos.length === 0 ? (
+        <div className="p-8 text-center text-gray-400 italic">
+          No notes found
+        </div>
+      ) : (
+        filteredTodos.map((todo, index) => (
+          <NoteCard
+            key={todo.id}
+            title={todo.title}
+            content={[todo.text]}
+            isList={todo.tags.length > 0}
+            accentClass={ACCENT_COLORS[index % ACCENT_COLORS.length]}
+            isFavorite={todo.isFavorite}
+            onDelete={() => handleToggleDelete(todo.id)}
+            onToggleFavorite={() => handleToggleFavorite(todo.id)}
+          />
+        ))
+      )}
     </div>
   );
 };
