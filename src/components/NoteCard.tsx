@@ -27,13 +27,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       <div className={`w-4 shrink-0 ${accentClass}`}></div>
       <div className="flex-1 p-8">
         <div className="mb-4 flex items-start justify-between">
-          <h3 className="font-serif text-2xl leading-none font-bold text-gray-600">
+          <h3 className="font-serif text-2xl leading-none font-bold text-gray-600 capitalize">
             {title}
           </h3>
           <div className="flex gap-2">
             <IconButton
               onClick={onDelete}
-              className="bg-[#5fbcd3] text-white hover:bg-[#4ea9bf]"
+              className="border-2 border-[#5fbcd3] bg-white text-[#5fbcd3] hover:bg-[#5fbcd3]/10"
               ariaLabel="Delete note"
             >
               <svg
