@@ -4,8 +4,13 @@ import { TodoDialog, type Todo } from './TodoDialog';
 import type { TabType } from './Sidebar';
 
 interface TodoListProps {
+  todos: Todo[];
+  loading: boolean;
+  error: string | null;
   activeTab: TabType;
   onEdit: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
+  onDeletePermanent: (id: string) => void;
 }
 
 const ACCENT_COLORS = [
@@ -15,53 +20,25 @@ const ACCENT_COLORS = [
   'bg-[#ef9db3]', // pink
 ];
 
-export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+export const TodoList: React.FC<TodoListProps> = ({
+  todos,
+  loading,
+  error,
+  activeTab,
+  onEdit,
+  onUpdate,
+  onDeletePermanent,
+}) => {
   const API_URL = 'https://690ef084bd0fefc30a062073.mockapi.io/todos';
-
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error('Failed to fetch todos');
-        }
-        const data = await response.json();
-        setTodos(data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'An unknown error occurred'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTodos();
-
-    const handleRefresh = () => fetchTodos();
-    window.addEventListener('todo-added', handleRefresh);
-    window.addEventListener('todo-updated', handleRefresh);
-    return () => {
-      window.removeEventListener('todo-added', handleRefresh);
-      window.removeEventListener('todo-updated', handleRefresh);
-    };
-  }, []);
 
   const handleToggleFavorite = async (id: string) => {
     const todo = todos.find((t) => t.id === id);
     if (!todo) return;
 
     const newFavoriteStatus = !todo.isFavorite;
+    const updatedTodo = { ...todo, isFavorite: newFavoriteStatus };
 
-    setTodos((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, isFavorite: newFavoriteStatus } : t
-      )
-    );
+    onUpdate(updatedTodo);
 
     try {
       const response = await fetch(`${API_URL}/${id}`, {
@@ -75,11 +52,7 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
       }
     } catch (err) {
       console.error(err);
-      setTodos((prev) =>
-        prev.map((t) =>
-          t.id === id ? { ...t, isFavorite: todo.isFavorite } : t
-        )
-      );
+      onUpdate(todo);
     }
   };
 
@@ -89,7 +62,7 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
     if (!todo) return;
 
     if (isTrashTab) {
-      setTodos((prev) => prev.filter((t) => t.id !== id));
+      onDeletePermanent(id);
 
       try {
         const response = await fetch(`${API_URL}/${id}`, {
@@ -101,12 +74,11 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
         }
       } catch (err) {
         console.error(err);
-        setTodos((prev) => [...prev, todo]);
+        onUpdate(todo);
       }
     } else {
-      setTodos((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, isDeleted: true } : t))
-      );
+      const updatedTodo = { ...todo, isDeleted: true };
+      onUpdate(updatedTodo);
 
       try {
         const response = await fetch(`${API_URL}/${id}`, {
@@ -120,9 +92,7 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
         }
       } catch (err) {
         console.error(err);
-        setTodos((prev) =>
-          prev.map((t) => (t.id === id ? { ...t, isDeleted: false } : t))
-        );
+        onUpdate(todo);
       }
     }
   };
@@ -137,24 +107,14 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
     return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   }
 
-  const filteredTodos = todos.filter((todo) => {
-    if (activeTab === 'trash') {
-      return todo.isDeleted;
-    }
-    if (activeTab === 'favorites') {
-      return todo.isFavorite && !todo.isDeleted;
-    }
-    return !todo.isDeleted;
-  });
-
   return (
     <div className="flex w-full max-w-4xl flex-col gap-6">
-      {filteredTodos.length === 0 ? (
+      {todos.length === 0 ? (
         <div className="p-8 text-center text-gray-400 italic">
           No notes found
         </div>
       ) : (
-        filteredTodos.map((todo, index) => (
+        todos.map((todo, index) => (
           <NoteCard
             key={todo.id}
             title={todo.title}
