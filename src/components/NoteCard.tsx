@@ -8,8 +8,9 @@ interface NoteCardProps {
   accentClass: string;
   isFavorite?: boolean;
   isDeleted?: boolean;
-  onDelete?: () => void;
-  onToggleFavorite?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
+  onToggleFavorite?: (e: React.MouseEvent) => void;
+  onClick?: () => void;
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
@@ -21,9 +22,17 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   isDeleted = false,
   onDelete,
   onToggleFavorite,
+  onClick,
 }) => {
   return (
-    <div className="flex min-h-[160px] overflow-hidden rounded-sm bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+    <div
+      onClick={onClick}
+      className={`flex min-h-[160px] overflow-hidden rounded-sm bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow ${
+        onClick
+          ? 'cursor-pointer hover:shadow-[0_4px_15px_rgba(0,0,0,0.1)]'
+          : ''
+      }`}
+    >
       <div className={`w-4 shrink-0 ${accentClass}`}></div>
       <div className="flex-1 p-8">
         <div className="mb-4 flex items-start justify-between">
@@ -32,7 +41,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           </h3>
           <div className="flex gap-2">
             <IconButton
-              onClick={onDelete}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onDelete?.(e as any);
+              }}
               className="border-2 border-[#5fbcd3] bg-white text-[#5fbcd3] hover:bg-[#5fbcd3]/10"
               ariaLabel="Delete note"
             >
@@ -55,7 +67,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               </svg>
             </IconButton>
             <IconButton
-              onClick={onToggleFavorite}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onToggleFavorite?.(e as any);
+              }}
               className={`border-2 border-[#5fbcd3] ${
                 isFavorite
                   ? 'bg-[#5fbcd3] text-white'

@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconButtonProps {
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
   ariaLabel?: string;
   children: React.ReactNode;

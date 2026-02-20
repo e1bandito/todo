@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { NoteCard } from './NoteCard';
+import { TodoDialog, type Todo } from './TodoDialog';
 import type { TabType } from './Sidebar';
-
-interface Todo {
-  id: string;
-  createdAt: string;
-  tags: string[];
-  title: string;
-  text: string;
-  isFavorite: boolean;
-  isDeleted: boolean;
-}
 
 interface TodoListProps {
   activeTab: TabType;
+  onEdit: (todo: Todo) => void;
 }
 
 const ACCENT_COLORS = [
@@ -23,7 +15,7 @@ const ACCENT_COLORS = [
   'bg-[#ef9db3]', // pink
 ];
 
-export const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
+export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,9 +42,13 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
 
     fetchTodos();
 
-    const handleAdded = () => fetchTodos();
-    window.addEventListener('todo-added', handleAdded);
-    return () => window.removeEventListener('todo-added', handleAdded);
+    const handleRefresh = () => fetchTodos();
+    window.addEventListener('todo-added', handleRefresh);
+    window.addEventListener('todo-updated', handleRefresh);
+    return () => {
+      window.removeEventListener('todo-added', handleRefresh);
+      window.removeEventListener('todo-updated', handleRefresh);
+    };
   }, []);
 
   const handleToggleFavorite = async (id: string) => {
@@ -147,6 +143,7 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
             isList={todo.tags.length > 0}
             accentClass={ACCENT_COLORS[index % ACCENT_COLORS.length]}
             isFavorite={todo.isFavorite}
+            onClick={() => onEdit(todo)}
             onDelete={() => handleToggleDelete(todo.id)}
             onToggleFavorite={() => handleToggleFavorite(todo.id)}
           />
