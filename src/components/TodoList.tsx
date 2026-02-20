@@ -8,23 +8,18 @@ interface TodoListProps {
   loading: boolean;
   error: string | null;
   activeTab: TabType;
+  tagToColor: Record<string, string>;
   onEdit: (todo: Todo) => void;
   onUpdate: (todo: Todo) => void;
   onDeletePermanent: (id: string) => void;
 }
-
-const ACCENT_COLORS = [
-  'bg-[#a28ed4]', // purple
-  'bg-[#ec9f73]', // orange
-  'bg-[#5fbcd3]', // light blue
-  'bg-[#ef9db3]', // pink
-];
 
 export const TodoList: React.FC<TodoListProps> = ({
   todos,
   loading,
   error,
   activeTab,
+  tagToColor,
   onEdit,
   onUpdate,
   onDeletePermanent,
@@ -114,13 +109,13 @@ export const TodoList: React.FC<TodoListProps> = ({
           No notes found
         </div>
       ) : (
-        todos.map((todo, index) => (
+        todos.map((todo) => (
           <NoteCard
             key={todo.id}
             title={todo.title}
             content={[todo.text]}
             isList={todo.tags.length > 0}
-            accentClass={ACCENT_COLORS[index % ACCENT_COLORS.length]}
+            accentColors={todo.tags.map((tag) => tagToColor[tag] || '#e5e7eb')}
             isFavorite={todo.isFavorite}
             onClick={() => onEdit(todo)}
             onDelete={() => handleToggleDelete(todo.id)}

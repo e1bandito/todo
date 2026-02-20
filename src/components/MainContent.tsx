@@ -10,12 +10,15 @@ interface MainContentProps {
 }
 
 const API_URL = 'https://690ef084bd0fefc30a062073.mockapi.io/todos';
-const TAG_COLORS: ('purple' | 'pink' | 'orange' | 'blue')[] = [
-  'purple',
-  'pink',
-  'orange',
-  'blue',
-];
+
+const stringToColor = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360;
+  return `hsl(${h}, 70%, 60%)`;
+};
 
 export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,6 +64,14 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
     });
     return Array.from(tags).sort();
   }, [todos]);
+
+  const tagToColor = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    allTags.forEach((tag) => {
+      mapping[tag] = stringToColor(tag);
+    });
+    return mapping;
+  }, [allTags]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -137,11 +148,11 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
         </IconButton>
 
         <div className="flex flex-wrap items-center justify-start gap-2 md:justify-end md:gap-3">
-          {allTags.map((tag, index) => (
+          {allTags.map((tag) => (
             <CategoryTag
               key={tag}
               label={tag}
-              color={TAG_COLORS[index % TAG_COLORS.length]}
+              color={tagToColor[tag]}
               isActive={selectedTags.includes(tag)}
               onClick={() => toggleTag(tag)}
             />
@@ -162,6 +173,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
         loading={loading}
         error={error}
         activeTab={activeTab}
+        tagToColor={tagToColor}
         onEdit={handleEdit}
         onUpdate={updateTodoInState}
         onDeletePermanent={removeTodoFromState}

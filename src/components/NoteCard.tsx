@@ -5,7 +5,7 @@ interface NoteCardProps {
   title: string;
   content: string[];
   isList?: boolean;
-  accentClass: string;
+  accentColors?: string[];
   isFavorite?: boolean;
   isDeleted?: boolean;
   onDelete?: (e: React.MouseEvent) => void;
@@ -17,13 +17,32 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   title,
   content,
   isList = false,
-  accentClass,
+  accentColors = [],
   isFavorite = false,
   isDeleted = false,
   onDelete,
   onToggleFavorite,
   onClick,
 }) => {
+  const getAccentStyle = () => {
+    if (accentColors.length === 0) {
+      return { backgroundColor: '#e5e7eb' };
+    }
+    if (accentColors.length === 1) {
+      return { backgroundColor: accentColors[0] };
+    }
+
+    const segments = accentColors.map((color, i) => {
+      const start = (i / accentColors.length) * 100;
+      const end = ((i + 1) / accentColors.length) * 100;
+      return `${color} ${start}%, ${color} ${end}%`;
+    });
+
+    return {
+      background: `linear-gradient(to bottom, ${segments.join(', ')})`,
+    };
+  };
+
   return (
     <div
       onClick={onClick}
@@ -33,7 +52,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           : ''
       }`}
     >
-      <div className={`w-4 shrink-0 ${accentClass}`}></div>
+      <div className="w-4 shrink-0" style={getAccentStyle()}></div>
       <div className="flex-1 p-8">
         <div className="mb-4 flex items-start justify-between">
           <h3 className="font-serif text-2xl leading-none font-bold text-gray-600 capitalize">
