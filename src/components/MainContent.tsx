@@ -7,6 +7,7 @@ import type { TabType } from './Sidebar';
 
 interface MainContentProps {
   activeTab: TabType;
+  searchQuery: string;
 }
 
 const API_URL = 'https://690ef084bd0fefc30a062073.mockapi.io/todos';
@@ -20,7 +21,10 @@ const stringToColor = (str: string) => {
   return `hsl(${h}, 70%, 60%)`;
 };
 
-export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
+export const MainContent: React.FC<MainContentProps> = ({
+  activeTab,
+  searchQuery,
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -110,8 +114,17 @@ export const MainContent: React.FC<MainContentProps> = ({ activeTab }) => {
       );
     }
 
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (t) =>
+          t.title.toLowerCase().includes(query) ||
+          t.text.toLowerCase().includes(query)
+      );
+    }
+
     return result;
-  }, [todos, activeTab, selectedTags]);
+  }, [todos, activeTab, selectedTags, searchQuery]);
 
   const updateTodoInState = (updatedTodo: Todo) => {
     setTodos((prev) =>

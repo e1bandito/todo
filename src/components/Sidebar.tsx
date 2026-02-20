@@ -6,6 +6,8 @@ export type TabType = 'all' | 'favorites' | 'trash';
 interface SidebarProps {
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 const icons = {
@@ -19,6 +21,8 @@ const icons = {
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   setActiveTab,
+  searchQuery,
+  setSearchQuery,
 }) => {
   return (
     <aside className="flex w-full flex-col border-b border-gray-100 bg-white/50 pt-4 shadow-sm md:w-64 md:border-r md:border-b-0 md:pt-8">
@@ -27,6 +31,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <input
             type="text"
             placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-full border border-gray-100 bg-white px-4 py-2 pr-10 text-sm placeholder:text-gray-300 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none"
           />
           <svg
