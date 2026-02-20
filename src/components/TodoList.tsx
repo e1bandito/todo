@@ -84,27 +84,46 @@ export const TodoList: React.FC<TodoListProps> = ({ activeTab, onEdit }) => {
   };
 
   const handleToggleDelete = async (id: string) => {
-    setTodos((prev) =>
-      prev.map((todo) => (todo.id === id ? { ...todo, isDeleted: true } : todo))
-    );
+    const isTrashTab = activeTab === 'trash';
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
 
-    try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isDeleted: true }),
-      });
+    if (isTrashTab) {
+      setTodos((prev) => prev.filter((t) => t.id !== id));
 
-      if (!response.ok) {
-        throw new Error('Failed to delete todo');
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete todo permanently');
+        }
+      } catch (err) {
+        console.error(err);
+        setTodos((prev) => [...prev, todo]);
       }
-    } catch (err) {
-      console.error(err);
+    } else {
       setTodos((prev) =>
-        prev.map((todo) =>
-          todo.id === id ? { ...todo, isDeleted: false } : todo
-        )
+        prev.map((t) => (t.id === id ? { ...t, isDeleted: true } : t))
       );
+
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isDeleted: true }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to move todo to trash');
+        }
+      } catch (err) {
+        console.error(err);
+        setTodos((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, isDeleted: false } : t))
+        );
+      }
     }
   };
 

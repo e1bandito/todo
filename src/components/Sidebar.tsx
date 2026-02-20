@@ -55,16 +55,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => setActiveTab('all')}
         />
         <NavItem
-          icon={icons.trash}
-          label="Trash"
-          isActive={activeTab === 'trash'}
-          onClick={() => setActiveTab('trash')}
-        />
-        <NavItem
           icon={icons.favorites}
           label="Favorites"
           isActive={activeTab === 'favorites'}
           onClick={() => setActiveTab('favorites')}
+        />
+        <NavItem
+          icon={icons.trash}
+          label="Trash"
+          isActive={activeTab === 'trash'}
+          onClick={() => setActiveTab('trash')}
         />
       </nav>
     </aside>
